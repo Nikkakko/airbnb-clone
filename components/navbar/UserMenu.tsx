@@ -64,11 +64,14 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
           <AiOutlineMenu size={18} />
           <div className="hidden md:block">
             <Avatar>
-              <AvatarImage src={user?.image || ""} alt={user?.name || ""} />
+              <AvatarImage
+                src={user?.image as string}
+                alt={user?.name as string}
+              />
               <AvatarFallback>
                 <Image
                   src={"/images/placeholder.jpg"}
-                  alt={user?.name || "user-avatar"}
+                  alt={"user-avatar"}
                   width={40}
                   height={40}
                   className="rounded-full"
