@@ -6,6 +6,9 @@ import Header from "@/components/navbar/Header";
 import ModalProvider from "@/components/ModalProvider";
 import { Toaster } from "@/components/ui/toaster";
 
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
+
 const font = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,17 +22,23 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
-    <html lang="en">
-      <body
-        className={cn(font.className, "min-h-screen flex flex-col antialiased")}
-        suppressHydrationWarning
-      >
-        <Header />
-        <ModalProvider />
-        <Toaster />
-        {children}
-      </body>
-    </html>
+    <SessionProvider session={session}>
+      <html lang="en">
+        <body
+          className={cn(
+            font.className,
+            "min-h-screen flex flex-col antialiased"
+          )}
+          suppressHydrationWarning
+        >
+          <Header />
+          <ModalProvider />
+          <Toaster />
+          {children}
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

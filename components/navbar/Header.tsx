@@ -3,6 +3,7 @@ import { Shell } from "../ui/Shell";
 import Logo from "./Logo";
 import Search from "./Search";
 import UserMenu from "./UserMenu";
+import { currentUser } from "@/lib/auth";
 
 interface HeaderProps {}
 

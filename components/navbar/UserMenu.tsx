@@ -5,11 +5,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Image from "next/image";
 import MenuItem from "./MenuItem";
 import { useModalStore } from "@/store/modalStore";
+import { logout } from "@/_actions/logout";
+import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface UserMenuProps {}
 
 const UserMenu: React.FC<UserMenuProps> = ({}) => {
   const { type, onOpen } = useModalStore();
+  const [isPending, startTransition] = React.useTransition();
+  const router = useRouter();
+  const session = useSession();
+  const user = session.data?.user;
 
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -40,24 +48,68 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
       </div>
 
       {isOpen && (
-        <div className="absolute rounded-xl shadow-mdw-[40vw] md:w-3/4  bg-white overflow-hidden right-0 top-16 text-sm">
+        <div
+          className={cn(
+            "absolute rounded-xl shadow-mdw-[40vw] md:w-3/4  bg-white overflow-hidden right-0 top-16 text-sm shadow-md",
+            isPending ? "pointer-events-none" : "pointer-events-auto"
+          )}
+        >
           <div className="flex flex-col cursor-pointer">
-            <>
-              <MenuItem
-                onClick={() => {
-                  onOpen("login", {});
-                  setIsOpen(false);
-                }}
-                label={"Login"}
-              />
-              <MenuItem
-                onClick={() => {
-                  onOpen("register", {});
-                  setIsOpen(false);
-                }}
-                label={"Sign up"}
-              />
-            </>
+            {user ? (
+              <>
+                <MenuItem
+                  label="My trips"
+                  onClick={() => router.push("/trips")}
+                />
+                <MenuItem
+                  label="My favorites"
+                  onClick={() => router.push("/favorites")}
+                />
+                <MenuItem
+                  label="My reservations"
+                  onClick={() => router.push("/reservations")}
+                />
+                <MenuItem
+                  label="My properties"
+                  onClick={() => router.push("/properties")}
+                />
+                <MenuItem
+                  label="Airbnb your home"
+                  // onClick={rentModal.onOpen}
+                  onClick={() => {
+                    onOpen("rent", {});
+                    setIsOpen(false);
+                  }}
+                />
+                <hr />
+                <MenuItem
+                  label="Logout"
+                  onClick={() => {
+                    startTransition(() => {
+                      logout();
+                    });
+                    setIsOpen(false);
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <MenuItem
+                  onClick={() => {
+                    onOpen("login", {});
+                    setIsOpen(false);
+                  }}
+                  label={"Login"}
+                />
+                <MenuItem
+                  onClick={() => {
+                    onOpen("register", {});
+                    setIsOpen(false);
+                  }}
+                  label={"Sign up"}
+                />
+              </>
+            )}
           </div>
         </div>
       )}
