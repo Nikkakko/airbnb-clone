@@ -65,12 +65,17 @@ const RegisterModal: React.FC<RegisterProps> = ({}) => {
     });
   }
 
+  const handleClose = React.useCallback(() => {
+    onClose();
+    form.reset();
+  }, [form, onClose]);
+
   if (!isModalOpen) {
     return null;
   }
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={onClose}>
+    <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Register</DialogTitle>

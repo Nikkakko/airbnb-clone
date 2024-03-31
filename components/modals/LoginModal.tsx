@@ -63,12 +63,18 @@ const LoginModal: React.FC<LoginModalProps> = ({}) => {
     });
   }
 
+  //make handleClose function with react useCallBack
+  const handleClose = React.useCallback(() => {
+    onClose();
+    form.reset();
+  }, [form, onClose]);
+
   if (!isModalOpen) {
     return null;
   }
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={onClose}>
+    <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Login</DialogTitle>

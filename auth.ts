@@ -19,6 +19,10 @@ export const {
       });
     },
   },
+  pages: {
+    error: "/auth/error",
+    signIn: "/auth/signin",
+  },
   callbacks: {
     async signIn({ user, account }) {
       // Allow OAuth without email verification

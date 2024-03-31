@@ -20,6 +20,12 @@ export const login = async (
 
   const existingUser = await getUserByEmail(email);
 
+  if (existingUser?.emailVerified) {
+    return {
+      error: "Email already in use with different provider!",
+    };
+  }
+
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "Email does not exist!" };
   }

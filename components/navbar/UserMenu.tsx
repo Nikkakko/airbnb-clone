@@ -65,7 +65,15 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
           <div className="hidden md:block">
             <Avatar>
               <AvatarImage src={user?.image || ""} alt={user?.name || ""} />
-              <AvatarFallback />
+              <AvatarFallback>
+                <Image
+                  src={"/images/placeholder.jpg"}
+                  alt={user?.name || "user-avatar"}
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+              </AvatarFallback>
             </Avatar>
           </div>
         </div>
