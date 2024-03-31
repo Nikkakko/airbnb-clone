@@ -9,6 +9,30 @@ import { logout } from "@/_actions/logout";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Separator } from "../ui/separator";
+
+const loggedInItems = [
+  {
+    id: "1",
+    label: "My trips",
+    href: "/trips",
+  },
+  {
+    id: "2",
+    label: "My favorites",
+    href: "/favorites",
+  },
+  {
+    id: "3",
+    label: "My reservations",
+    href: "/reservations",
+  },
+  {
+    id: "4",
+    label: "My properties",
+    href: "/properties",
+  },
+];
 
 interface UserMenuProps {}
 
@@ -40,7 +64,7 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
           <AiOutlineMenu size={18} />
           <div className="hidden md:block">
             <Avatar>
-              <AvatarImage />
+              <AvatarImage src={user?.image || ""} alt={user?.name || ""} />
               <AvatarFallback />
             </Avatar>
           </div>
@@ -57,22 +81,13 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
           <div className="flex flex-col cursor-pointer">
             {user ? (
               <>
-                <MenuItem
-                  label="My trips"
-                  onClick={() => router.push("/trips")}
-                />
-                <MenuItem
-                  label="My favorites"
-                  onClick={() => router.push("/favorites")}
-                />
-                <MenuItem
-                  label="My reservations"
-                  onClick={() => router.push("/reservations")}
-                />
-                <MenuItem
-                  label="My properties"
-                  onClick={() => router.push("/properties")}
-                />
+                {loggedInItems.map(item => (
+                  <MenuItem
+                    key={item.id}
+                    onClick={() => router.push(item.href)}
+                    label={item.label}
+                  />
+                ))}
                 <MenuItem
                   label="Airbnb your home"
                   // onClick={rentModal.onOpen}
@@ -81,7 +96,7 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
                     setIsOpen(false);
                   }}
                 />
-                <hr />
+                <Separator />
                 <MenuItem
                   label="Logout"
                   onClick={() => {
