@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
+import { Inter, Nunito } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Header from "@/components/navbar/Header";
 import ModalProvider from "@/components/ModalProvider";
-import { Toaster } from "@/components/ui/toaster";
 
 const font = Nunito({ subsets: ["latin"] });
 
@@ -27,7 +26,6 @@ export default async function RootLayout({
       >
         <Header />
         <ModalProvider />
-        <Toaster />
         {children}
       </body>
     </html>

@@ -4,10 +4,13 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Image from "next/image";
 import MenuItem from "./MenuItem";
+import { useModalStore } from "@/store/modalStore";
 
 interface UserMenuProps {}
 
 const UserMenu: React.FC<UserMenuProps> = ({}) => {
+  const { type, onOpen } = useModalStore();
+
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggleOpen = React.useCallback(() => {
@@ -40,8 +43,20 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
         <div className="absolute rounded-xl shadow-mdw-[40vw] md:w-3/4  bg-white overflow-hidden right-0 top-16 text-sm">
           <div className="flex flex-col cursor-pointer">
             <>
-              <MenuItem onClick={() => {}} label={"Login"} />
-              <MenuItem onClick={() => {}} label={"Sign up"} />
+              <MenuItem
+                onClick={() => {
+                  onOpen("login", {});
+                  setIsOpen(false);
+                }}
+                label={"Login"}
+              />
+              <MenuItem
+                onClick={() => {
+                  onOpen("register", {});
+                  setIsOpen(false);
+                }}
+                label={"Sign up"}
+              />
             </>
           </div>
         </div>
