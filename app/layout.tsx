@@ -3,6 +3,7 @@ import { Inter, Nunito } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Header from "@/components/navbar/Header";
+import ModalProvider from "@/components/ModalProvider";
 
 const font = Nunito({ subsets: ["latin"] });
 
@@ -19,8 +20,12 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(font.className, "min-h-screen flex flex-col")}>
+      <body
+        className={cn(font.className, "min-h-screen flex flex-col antialiased")}
+        suppressHydrationWarning
+      >
         <Header />
+        <ModalProvider />
         {children}
       </body>
     </html>

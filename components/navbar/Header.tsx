@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
           >
             <Logo />
             <Search />
-            <UserMenu currentUser={currentUser} />
+            <UserMenu />
           </div>
         </Shell>
       </div>
