@@ -48,11 +48,19 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
   const toggleOpen = React.useCallback(() => {
     setIsOpen(prev => !prev);
   }, []);
+
+  const handleRent = React.useCallback(() => {
+    if (!user) {
+      onOpen("login", {});
+    } else {
+      onOpen("rent", {});
+    }
+  }, [user, onOpen]);
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
         <div
-          onClick={() => {}}
+          onClick={handleRent}
           className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer"
         >
           Airbnb your home
@@ -99,14 +107,7 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
                     label={item.label}
                   />
                 ))}
-                <MenuItem
-                  label="Airbnb your home"
-                  // onClick={rentModal.onOpen}
-                  onClick={() => {
-                    onOpen("rent", {});
-                    setIsOpen(false);
-                  }}
-                />
+                <MenuItem label="Airbnb your home" onClick={handleRent} />
                 <Separator />
                 <MenuItem
                   label="Logout"
