@@ -15,7 +15,15 @@ const useCountries = () => {
     return formatedCountries.find(country => country.value === value);
   };
 
-  return { getAll, getByValue };
+  const getCoordinates = (value: string) => {
+    const findCountry = formatedCountries.find(
+      country => country.label === value
+    );
+
+    return findCountry?.latlng;
+  };
+
+  return { getAll, getByValue, getCoordinates };
 };
 
 export default useCountries;

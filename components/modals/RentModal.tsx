@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import CategoryInput from "../categories/steps/CategoryInput";
 import CountryInput from "../categories/steps/CountryInput";
+import InfoInput from "../categories/steps/InfoInput";
 
 interface RentModalProps {}
 
@@ -92,9 +93,15 @@ const RentModal: React.FC<RentModalProps> = ({}) => {
     }
   }, [setStep, step, form]);
 
+  const handleOnClose = React.useCallback(() => {
+    onClose();
+    form.reset();
+    setStep(Steps.CATEGORY);
+  }, [onClose, form]);
+
   if (!isModalOpen) return null;
   return (
-    <Dialog open={isModalOpen} onOpenChange={onClose}>
+    <Dialog open={isModalOpen} onOpenChange={handleOnClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Rent</DialogTitle>
@@ -106,7 +113,18 @@ const RentModal: React.FC<RentModalProps> = ({}) => {
 
             {step === Steps.LOCATION && <CountryInput />}
 
+            {step === Steps.INFO && <InfoInput />}
+
             <div className="flex  gap-4">
+              {step !== Steps.CATEGORY && (
+                <Button
+                  onClick={handleBack}
+                  type="button"
+                  className="mt-4 w-full bg-neutral-100 text-neutral-900 hover:bg-neutral-200"
+                >
+                  Back
+                </Button>
+              )}
               <Button
                 onClick={handleNext}
                 type="submit"
@@ -114,16 +132,6 @@ const RentModal: React.FC<RentModalProps> = ({}) => {
               >
                 {actionLabel}
               </Button>
-
-              {step !== Steps.CATEGORY && (
-                <Button
-                  onClick={handleBack}
-                  type="button"
-                  className="mt-4 w-full"
-                >
-                  Back
-                </Button>
-              )}
             </div>
           </form>
         </Form>

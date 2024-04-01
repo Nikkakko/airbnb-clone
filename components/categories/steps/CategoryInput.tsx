@@ -29,7 +29,8 @@ const CategoryInput: React.FC<CategoryInputProps> = ({}) => {
                   }}
                   className={cn(
                     "rounded-xl border-2 col-span-1 p-4 flex flex-col gap-3 hover:border-black transition cursor-pointer",
-                    field.value === category.label && "bg-neutral-100 "
+                    field.value === category.label &&
+                      "bg-neutral-100 border-black"
                   )}
                 >
                   <category.icon size={30} />
