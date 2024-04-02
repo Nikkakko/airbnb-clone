@@ -10,6 +10,7 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { useFormContext } from "react-hook-form";
 import useCountries from "@/hooks/useCountries";
+import NoSsr from "@/hooks/noSsr";
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;

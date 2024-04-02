@@ -23,7 +23,7 @@ export const RegisterSchema = z.object({
 
 export const RentSchema = z.object({
   category: z.string().min(1, {
-    message: "Category is required",
+    message: "Choose a category",
   }),
 
   location: z.string().min(1, {
@@ -46,9 +46,14 @@ export const RentSchema = z.object({
     message: "Image is required",
   }),
 
-  price: z.number().min(1, {
-    message: "Price is required",
-  }),
+  price: z
+    .number({
+      invalid_type_error: "Enter Correct Price",
+      required_error: "Price is required",
+    })
+    .min(1, {
+      message: "Price is required",
+    }),
 
   title: z.string().min(1, {
     message: "Title is required",

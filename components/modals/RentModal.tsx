@@ -1,73 +1,89 @@
+"use client";
 import * as React from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useModalStore } from "@/store/modalStore";
-import Heading from "../Heading";
-import { categories } from "@/data/sitedata";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RentSchema } from "@/schemas";
 import * as z from "zod";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  useFormField,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { Form } from "@/components/ui/form";
+
 import { Button } from "../ui/button";
 import CategoryInput from "../categories/steps/CategoryInput";
-import CountryInput from "../categories/steps/CountryInput";
+import CountrySelect from "../categories/steps/CountrySelect";
 import InfoInput from "../categories/steps/InfoInput";
+import AddImage from "../categories/steps/AddImage";
+import DescriptionInput from "../categories/steps/DescriptionInput";
+import PriceInput from "../categories/steps/PriceInput";
+import { createListing } from "@/_actions/listing";
+import { Loader2 } from "lucide-react";
 
 interface RentModalProps {}
 
-enum Steps {
-  CATEGORY = 0,
-  LOCATION = 1,
-  INFO = 2,
-  IMAGES = 3,
-  DESCRIPTION = 4,
-  PRICE = 5,
-}
+const steps = [
+  {
+    id: "Step 1",
+    name: "Category",
+    fields: ["category"],
+  },
+  {
+    id: "Step 2",
+    name: "Location",
+    fields: ["location"],
+  },
+  {
+    id: "Step 3",
+    name: "Info",
+    fields: ["roomCount", "bathroomCount", "guestCount"],
+  },
+  {
+    id: "Step 4",
+    name: "Images",
+    fields: ["imageSrc"],
+  },
+  {
+    id: "Step 5",
+    name: "Description",
+    fields: ["description", "title"],
+  },
+  {
+    id: "Step 6",
+    name: "Price",
+    fields: ["price"],
+  },
+];
+
+type Inputs = z.infer<typeof RentSchema>;
+
+type FieldName = keyof Inputs;
 
 const RentModal: React.FC<RentModalProps> = ({}) => {
   const { type, isOpen, onClose } = useModalStore();
   const isModalOpen = type === "rent" && isOpen;
-  const [step, setStep] = React.useState(Steps.CATEGORY);
+  const [currentStep, setCurrentStep] = React.useState(0);
+  const [previousStep, setPreviousStep] = React.useState(0);
   const [isPending, startTransition] = React.useTransition();
 
   const handleBack = React.useCallback(() => {
-    if (step === Steps.CATEGORY) {
-      onClose();
-    } else {
-      setStep(prev => prev - 1);
+    if (currentStep > 0) {
+      setPreviousStep(currentStep);
+      setCurrentStep(step => step - 1);
     }
-  }, [onClose, step]);
+  }, [currentStep]);
 
   const actionLabel = React.useMemo(() => {
-    if (step === Steps.PRICE) {
-      return "Create";
-    } else {
-      return "Next";
-    }
-  }, [step]);
+    return currentStep === steps.length - 1 ? "Create" : "Next";
+  }, [currentStep]);
 
   const form = useForm<z.infer<typeof RentSchema>>({
     resolver: zodResolver(RentSchema),
-
-    mode: "onSubmit",
+    mode: "onChange",
     defaultValues: {
       category: "",
       location: "",
@@ -82,21 +98,36 @@ const RentModal: React.FC<RentModalProps> = ({}) => {
   });
 
   function onSubmit(values: z.infer<typeof RentSchema>) {
-    console.log(values);
+    startTransition(async () => {
+      const listing = await createListing(values);
+      if (listing.success) {
+        handleOnClose();
+      }
+    });
   }
 
-  const handleNext = React.useCallback(() => {
-    setStep(prev => prev + 1);
+  const next = async () => {
+    const fields = steps[currentStep].fields;
+    const output = await form.trigger(fields as FieldName[], {
+      shouldFocus: true,
+    });
 
-    if (step === Steps.PRICE) {
-      form.handleSubmit(onSubmit)();
+    if (!output) return;
+
+    if (currentStep < steps.length - 1) {
+      setPreviousStep(currentStep);
+      setCurrentStep(step => step + 1);
+    } else {
+      if (currentStep === steps.length - 1) {
+        await form.handleSubmit(onSubmit)();
+      }
     }
-  }, [setStep, step, form]);
+  };
 
   const handleOnClose = React.useCallback(() => {
     onClose();
     form.reset();
-    setStep(Steps.CATEGORY);
+    setCurrentStep(0);
   }, [onClose, form]);
 
   if (!isModalOpen) return null;
@@ -109,14 +140,15 @@ const RentModal: React.FC<RentModalProps> = ({}) => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            {step === Steps.CATEGORY && <CategoryInput />}
-
-            {step === Steps.LOCATION && <CountryInput />}
-
-            {step === Steps.INFO && <InfoInput />}
+            {currentStep === 0 && <CategoryInput />}
+            {currentStep === 1 && <CountrySelect />}
+            {currentStep === 2 && <InfoInput />}
+            {currentStep === 3 && <AddImage />}
+            {currentStep === 4 && <DescriptionInput />}
+            {currentStep === 5 && <PriceInput />}
 
             <div className="flex  gap-4">
-              {step !== Steps.CATEGORY && (
+              {currentStep !== 0 && (
                 <Button
                   onClick={handleBack}
                   type="button"
@@ -126,19 +158,18 @@ const RentModal: React.FC<RentModalProps> = ({}) => {
                 </Button>
               )}
               <Button
-                onClick={handleNext}
-                type="submit"
+                onClick={next}
+                disabled={isPending}
+                type="button"
                 className="bg-rose-500  text-white mt-4 w-full hover:bg-rose-600"
               >
+                {isPending && <Loader2 className="animate-spin mr-2" />}
                 {actionLabel}
               </Button>
             </div>
           </form>
         </Form>
       </DialogContent>
-      <DialogFooter>
-        <button>Close</button>
-      </DialogFooter>
     </Dialog>
   );
 };

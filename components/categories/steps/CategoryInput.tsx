@@ -1,5 +1,10 @@
 import Heading from "@/components/Heading";
-import { FormControl, FormField, FormItem } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { categories } from "@/data/sitedata";
 import { cn } from "@/lib/utils";
 import * as React from "react";
@@ -38,6 +43,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({}) => {
                 </div>
               </FormControl>
             ))}
+            <FormMessage />
           </FormItem>
         )}
       />

@@ -1,5 +1,5 @@
+import * as React from "react";
 import Heading from "@/components/Heading";
-import Map from "@/components/Map";
 import {
   FormControl,
   FormField,
@@ -7,7 +7,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -15,15 +14,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import NoSsr from "@/hooks/noSsr";
 import useCountries from "@/hooks/useCountries";
-
-import * as React from "react";
+import dynamic from "next/dynamic";
 import { useFormContext } from "react-hook-form";
 
-interface CountryInputProps {}
+const Map = dynamic(() => import("@/components/Map"), {
+  ssr: false,
+});
 
-const CountryInput: React.FC<CountryInputProps> = ({}) => {
+interface CountrySelectProps {}
+
+const CountrySelect: React.FC<CountrySelectProps> = ({}) => {
   const { control } = useFormContext();
   const { getAll } = useCountries();
 
@@ -65,11 +66,9 @@ const CountryInput: React.FC<CountryInputProps> = ({}) => {
         )}
       />
 
-      <NoSsr>
-        <Map />
-      </NoSsr>
+      <Map />
     </>
   );
 };
 
-export default CountryInput;
+export default CountrySelect;
