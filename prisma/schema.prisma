@@ -58,14 +58,14 @@ model Listing {
   id         String    @id @default(cuid())
   title String
   description String
-  imageSrc String
+  images String[]
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   category String
   roomCount Int
   bathroomCount Int
   guestCount Int
-  locationvalue String
+  locationValue String
   userId String
   price Int
 

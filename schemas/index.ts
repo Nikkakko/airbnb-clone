@@ -42,7 +42,7 @@ export const RentSchema = z.object({
     message: "Bathroom count is required",
   }),
 
-  imageSrc: z.string().min(1, {
+  imageSrc: z.array(z.string()).min(1, {
     message: "Image is required",
   }),
 

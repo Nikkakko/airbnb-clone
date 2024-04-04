@@ -83,11 +83,11 @@ const RentModal: React.FC<RentModalProps> = ({}) => {
 
   const form = useForm<z.infer<typeof RentSchema>>({
     resolver: zodResolver(RentSchema),
-    mode: "onChange",
+
     defaultValues: {
       category: "",
       location: "",
-      imageSrc: "",
+      imageSrc: [],
       description: "",
       price: 1,
       bathroomCount: 1,
@@ -105,6 +105,8 @@ const RentModal: React.FC<RentModalProps> = ({}) => {
       }
     });
   }
+
+  console.log(form.watch("imageSrc"));
 
   const next = async () => {
     const fields = steps[currentStep].fields;

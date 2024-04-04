@@ -101,6 +101,7 @@ const Counter = ({
           onClick={() => onChange(value - 1)}
           disabled={value === 1}
           className="p-2 rounded-md bg-neutral-100 hover:bg-neutral-200"
+          type="button"
         >
           <CircleMinus className="text-black" />
         </Button>
@@ -112,6 +113,7 @@ const Counter = ({
         <Button
           onClick={() => onChange(value + 1)}
           className="p-2 rounded-md bg-neutral-100 hover:bg-neutral-200"
+          type="button"
         >
           <CirclePlus className="text-black" />
         </Button>
