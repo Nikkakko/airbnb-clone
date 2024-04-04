@@ -3,7 +3,7 @@ import { Category } from "@/data/sitedata";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 import qs from "query-string";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 interface CategoryBoxProps {
   category: Category;
   selected: boolean;
@@ -11,24 +11,18 @@ interface CategoryBoxProps {
 
 const CategoryBox: React.FC<CategoryBoxProps> = ({ category, selected }) => {
   const router = useRouter();
-  const params = useParams();
+  const params = useSearchParams();
 
   const handleClick = React.useCallback(() => {
-    let currentQuery = {};
-
-    if (params) {
-      currentQuery = qs.parse(params.toString());
-    }
-
-    const newQuery = {
-      ...currentQuery,
-      category: category.label,
-    };
+    const currentCategory = params.get("category");
+    const newCategory = category.label;
+    const query =
+      currentCategory === newCategory ? {} : { category: newCategory };
 
     const url = qs.stringifyUrl(
       {
         url: "/",
-        query: newQuery,
+        query: query,
       },
       {
         skipEmptyString: true,
@@ -37,7 +31,7 @@ const CategoryBox: React.FC<CategoryBoxProps> = ({ category, selected }) => {
     );
 
     router.push(url);
-  }, [category.label, params, router]);
+  }, [category.label, router, params]);
   return (
     <div
       onClick={handleClick}

@@ -2,6 +2,7 @@
 import { currentUser } from "@/lib/auth";
 import db from "@/lib/db";
 import { RentSchema } from "@/schemas";
+import { revalidatePath } from "next/cache";
 import * as z from "zod";
 
 export async function createListing(values: z.infer<typeof RentSchema>) {
@@ -48,6 +49,7 @@ export async function createListing(values: z.infer<typeof RentSchema>) {
       },
     });
 
+    revalidatePath("/");
     return {
       success: true,
     };

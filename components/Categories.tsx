@@ -10,9 +10,6 @@ interface CategoriesProps {}
 const Categories: React.FC<CategoriesProps> = ({}) => {
   const params = useSearchParams();
   const categoryParam = params?.get("category");
-  const pathname = usePathname();
-
-  const defaultSelected = categoryParam ? categoryParam : "Beach";
 
   return (
     <Shell variant="container" as="section" className="sticky top-20">
@@ -28,7 +25,7 @@ const Categories: React.FC<CategoriesProps> = ({}) => {
           <CategoryBox
             key={index}
             category={category}
-            selected={category.label === defaultSelected}
+            selected={category.label === categoryParam}
           />
         ))}
       </div>

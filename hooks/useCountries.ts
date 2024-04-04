@@ -12,7 +12,7 @@ const useCountries = () => {
   const getAll = () => formatedCountries;
 
   const getByValue = (value: string) => {
-    return formatedCountries.find(country => country.value === value);
+    return formatedCountries.find(country => country.label === value);
   };
 
   const getCoordinates = (value: string) => {
