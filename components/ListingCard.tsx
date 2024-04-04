@@ -21,6 +21,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
   const location = getByValue(data.locationvalue);
 
   const dataPrice = formatedPrice(data.price);
+
   return (
     <div
       className="col-span-1 cursor-pointer group"
@@ -35,9 +36,13 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
             alt="Listing"
             priority
             quality={100}
+            sizes="200px"
           />
           <div className="absolute top-3 right-3">
-            <HeartButton listingId={data.id} />
+            <HeartButton
+              listingId={data.id}
+              isFavorite={user?.favoriteIds?.includes(data.id) || false}
+            />
           </div>
         </div>
         <div className="font-semibold text-lg">

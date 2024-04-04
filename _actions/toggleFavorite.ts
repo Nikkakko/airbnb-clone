@@ -1,6 +1,7 @@
 "use server";
 import { currentUser } from "@/lib/auth";
 import db from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 export async function toggleFavoriteAction(listingId: string) {
   const user = await currentUser();
@@ -49,6 +50,8 @@ export async function toggleFavoriteAction(listingId: string) {
         },
       });
     }
+
+    revalidatePath("/");
 
     return {
       success: true,
