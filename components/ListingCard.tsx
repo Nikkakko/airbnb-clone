@@ -70,15 +70,18 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <div
-            className="py-2 text-center text-sm text-white absolute 
-          bottom-0 left-0 right-0 bg-neutral-900 bg-opacity-50 rounded-b-md
-          "
-          >
-            {current} of {count}
+          <CarouselPrevious className="absolute top-1/2 left-2 transform -translate-y-1/2" />
+          <div className="py-2 text-center text-sm text-white absolute bottom-0 left-0 right-0 bg-neutral-900 bg-opacity-50 rounded-b-md">
+            {Array.from({ length: count }, (_, i) => i + 1).map(num => (
+              <span
+                key={num}
+                className={`h-2 w-2 mx-1 rounded-full inline-block ${
+                  num === current ? "bg-white" : "bg-white opacity-50"
+                }`}
+              />
+            ))}
           </div>
-          <CarouselNext />
+          <CarouselNext className="absolute top-1/2 right-2 transform -translate-y-1/2" />
         </Carousel>
         <div className="absolute top-3 right-3">
           <HeartButton
