@@ -3,6 +3,7 @@ import EmptyState from "@/components/EmptyState";
 import ListingCard from "@/components/ListingCard";
 import ListingCardSkeleton from "@/components/skeletons/ListingCardSkeleton";
 import { Shell } from "@/components/ui/Shell";
+
 import { getAllListing } from "@/lib/getData";
 import * as React from "react";
 

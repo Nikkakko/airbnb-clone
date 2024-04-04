@@ -106,7 +106,7 @@ const RentModal: React.FC<RentModalProps> = ({}) => {
     });
   }
 
-  console.log(form.watch("imageSrc"));
+  // console.log(form.formState.errors);
 
   const next = async () => {
     const fields = steps[currentStep].fields;

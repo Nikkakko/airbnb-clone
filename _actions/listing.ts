@@ -39,7 +39,7 @@ export async function createListing(values: z.infer<typeof RentSchema>) {
         title,
         description,
         price,
-        images: imageSrc,
+        images: (imageSrc as string[]) || [],
         category,
         locationValue: location,
         guestCount,

@@ -7,44 +7,86 @@ import HeartButton from "./HeartButton";
 import { useRouter } from "next/navigation";
 import useCountries from "@/hooks/useCountries";
 import { formatedPrice } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Link from "next/link";
 
 interface ListingCardProps {
   data: Listing;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [current, setCurrent] = React.useState(0);
+  const [count, setCount] = React.useState(0);
   const session = useSession();
   const user = session.data?.user;
   const router = useRouter();
   const { getByValue } = useCountries();
 
-  const location = getByValue(data.locationvalue);
+  const location = getByValue(data.locationValue);
 
   const dataPrice = formatedPrice(data.price);
 
+  React.useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
+
   return (
-    <div
-      className="col-span-1 cursor-pointer group"
-      onClick={() => router.push(`/listings/${data.id}`)}
-    >
+    <div className="col-span-1 cursor-pointer group">
       <div className="flex flex-col gap-2 w-full">
-        <div className="aspect-square w-full h-[200px] relative overflow-hidden rounded-xl">
-          <Image
-            fill
-            className="object-cover h-full w-full group-hover:scale-110 transition"
-            src={data.imageSrc}
-            alt="Listing"
-            priority
-            quality={100}
-            sizes="200px"
-          />
-          <div className="absolute top-3 right-3">
-            <HeartButton
-              listingId={data.id}
-              isFavorite={user?.favoriteIds?.includes(data.id) || false}
-            />
+        <Carousel className="w-full max-w-xs " setApi={setApi}>
+          <CarouselContent>
+            {data.images?.map((imageSrc, index) => (
+              <CarouselItem key={index} className="overflow-hidden rounded-md">
+                <Link href={`/listings/${data.id}`}>
+                  <Image
+                    src={imageSrc}
+                    alt="Listing Image"
+                    priority
+                    quality={100}
+                    width={200}
+                    height={150}
+                    className="object-cover h-[200px] w-full group-hover:scale-110 transition "
+                    sizes="200px"
+                  />
+                </Link>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <div
+            className="py-2 text-center text-sm text-white absolute 
+          bottom-0 left-0 right-0 bg-neutral-900 bg-opacity-50 rounded-b-md
+          "
+          >
+            {current} of {count}
           </div>
+          <CarouselNext />
+        </Carousel>
+        <div className="absolute top-3 right-3">
+          <HeartButton
+            listingId={data.id}
+            isFavorite={user?.favoriteIds?.includes(data.id) || false}
+          />
         </div>
+
         <div className="font-semibold text-lg">
           {location?.region}, {location?.label}
         </div>

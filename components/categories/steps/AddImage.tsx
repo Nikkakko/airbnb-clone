@@ -82,20 +82,19 @@ const AddImage: React.FC<AddImageProps> = ({}) => {
                 endpoint="imageUploader"
                 className="w-full h-32 bg-gray-200 rounded-lg flex items-center justify-center"
                 onClientUploadComplete={res => {
-                  //copy old and add new image
-                  setImages([
-                    ...(images || []),
-                    {
-                      fileUrl: res[0].url,
-                      fileKey: res[0].key,
-                    },
-                  ]);
+                  //copy old and add new image\
+
+                  const newImages = res.map(image => ({
+                    fileUrl: image.url,
+                    fileKey: image.key,
+                  }));
+
+                  setImages([...(images || []), ...newImages]);
+
+                  //update form value with new images
                   field.onChange([
                     ...(field.value || []),
-                    {
-                      url: res[0].url,
-                      key: res[0].key,
-                    },
+                    ...newImages.map(image => image.fileUrl),
                   ]);
 
                   toast({
