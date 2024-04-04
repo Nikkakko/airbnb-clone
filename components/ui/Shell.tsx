@@ -16,7 +16,7 @@ const shellVariants = cva("", {
   variants: {
     variant: {
       default: "container",
-      container: "max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4",
+      container: "max-w-[1280px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4",
       centered: "container flex h-[100dvh] max-w-2xl flex-col justify-center",
     },
   },

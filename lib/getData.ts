@@ -13,3 +13,24 @@ export async function getAllListing() {
     return [];
   }
 }
+
+export async function getListingById(id: string) {
+  try {
+    const listing = await db.listing.findUnique({
+      where: {
+        id,
+      },
+
+      include: {
+        user: true,
+      },
+    });
+
+    if (!listing) {
+      return null;
+    }
+    return listing;
+  } catch (error) {
+    return null;
+  }
+}

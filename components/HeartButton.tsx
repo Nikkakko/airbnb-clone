@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import { toggleFavoriteAction } from "@/_actions/toggleFavorite";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";

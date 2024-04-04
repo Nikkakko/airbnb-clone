@@ -82,13 +82,13 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
             ))}
           </div>
           <CarouselNext className="absolute top-1/2 right-2 transform -translate-y-1/2" />
+          <div className="absolute top-3 right-3 z-20">
+            <HeartButton
+              listingId={data.id}
+              isFavorite={user?.favoriteIds?.includes(data.id) || false}
+            />
+          </div>
         </Carousel>
-        <div className="absolute top-3 right-3">
-          <HeartButton
-            listingId={data.id}
-            isFavorite={user?.favoriteIds?.includes(data.id) || false}
-          />
-        </div>
 
         <div className="font-semibold text-lg">
           {location?.region}, {location?.label}
