@@ -1,14 +1,22 @@
+import * as React from "react";
 import EmptyState from "@/components/EmptyState";
-import HeartButton from "@/components/HeartButton";
+
+import Header from "@/components/listinDetail/Header";
+import ListingCategory from "@/components/listinDetail/ListingCategory";
 import { Shell } from "@/components/ui/Shell";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import useCountries from "@/hooks/useCountries";
+
+import { Separator } from "@/components/ui/separator";
+
 import { getListingById } from "@/lib/getData";
-import { ShareIcon } from "lucide-react";
 import { Metadata, ResolvingMetadata } from "next";
+import dynamic from "next/dynamic";
 import Image from "next/image";
-import * as React from "react";
+import { DatePickerWithRange } from "@/components/listinDetail/DateRangePickerComponent";
+import DatePickerCard from "@/components/DatePickerCard";
+const Map = dynamic(() => import("@/components/Map"), {
+  ssr: false,
+});
 
 interface ListingDetailProps {
   params: {
@@ -31,7 +39,9 @@ export async function generateMetadata(
   const previousImages = (await parent).openGraph?.images || [];
 
   return {
-    title: listing?.title,
+    title:
+      listing?.title +
+      " | Vacation Rentals, Homes, Experiences & Places - Airbnb",
     description: listing?.category,
     openGraph: {
       images: ["/some-specific-page-image.jpg", ...previousImages],
@@ -71,9 +81,8 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
     );
   }
   return (
-    <Shell variant="container" className="pt-24 flex flex-col">
+    <Shell variant="container" className="py-24 flex flex-col">
       {/* add images grid 1 left 4right */}
-
       <Header
         title={listing.title}
         listingId={listing.id}
@@ -150,6 +159,18 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
             </div>
           ))}
         </div>
+        <Separator />
+        <ListingCategory
+          category={listing.category}
+          description={listing.description}
+        />
+        <Separator />
+
+        <div className="flex items-start gap-6">
+          <Map location={listing?.locationValue} className="" />
+
+          <DatePickerCard price={listing.price} />
+        </div>
       </div>
     </Shell>
   );
@@ -158,44 +179,6 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
 const ViewImages = () => {
   return (
     <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 group-hover:bg-opacity-20 flex items-center justify-center transition duration-300 ease-in-out " />
-  );
-};
-
-const Header = ({
-  title,
-  listingId,
-  locationValue,
-}: {
-  title: string;
-  listingId: string;
-  locationValue: string;
-}) => {
-  const { getByValue } = useCountries();
-  const country = getByValue(locationValue as string);
-  return (
-    <div className="flex items-center justify-between pt-6 pb-4">
-      <div className="flex flex-col">
-        <h1 className="text-4xl font-bold">{title}</h1>
-        <div className="flex gap-1">
-          <p className="text-gray-500">{country?.label}</p> <span>&#8226;</span>
-          <p className="text-gray-500">{country?.region}</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button asChild variant={"ghost"} className="cursor-pointer ">
-          <div className="flex items-center gap-1">
-            <ShareIcon />
-            Share
-          </div>
-        </Button>
-        <Button asChild variant={"ghost"} className="cursor-pointer ">
-          <div className="flex items-center gap-1">
-            <HeartButton listingId={listingId} />
-            Save
-          </div>
-        </Button>
-      </div>
-    </div>
   );
 };
 

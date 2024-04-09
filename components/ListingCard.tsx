@@ -51,7 +51,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
   return (
     <div className="col-span-1 cursor-pointer group">
       <div className="flex flex-col gap-2 w-full">
-        <Carousel className="w-full max-w-xs " setApi={setApi}>
+        <Carousel className="w-full max-w-xs" setApi={setApi}>
           <CarouselContent>
             {data.images?.map((imageSrc, index) => (
               <CarouselItem key={index} className="overflow-hidden rounded-md">
@@ -63,7 +63,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
                     quality={100}
                     width={200}
                     height={150}
-                    className="object-cover h-[200px] w-full group-hover:scale-110 transition "
+                    className="object-cover min-w-[200px] h-[200px] w-full group-hover:scale-110 transition "
                     sizes="200px"
                   />
                 </Link>

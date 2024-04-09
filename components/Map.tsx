@@ -11,6 +11,8 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { useFormContext } from "react-hook-form";
 import useCountries from "@/hooks/useCountries";
 import NoSsr from "@/hooks/noSsr";
+import MapLoader from "./MapLoader";
+import { cn } from "@/lib/utils";
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;
@@ -20,22 +22,25 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow.src,
 });
 
-interface MapProps {
+interface MapProps extends React.HTMLAttributes<HTMLDivElement> {
   center?: number[];
+  location?: string;
 }
 
 const url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const attribution =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-const Map: React.FC<MapProps> = () => {
-  const { getValues } = useFormContext();
+const Map: React.FC<MapProps> = ({ location, ...props }) => {
+  const form = useFormContext();
   const { getCoordinates } = useCountries();
-  const locationValue = getValues("location");
-  const center = getCoordinates(locationValue);
+  const locationValue = form?.getValues("location") || location;
+  const center = getCoordinates(
+    (location as string) || (locationValue as string)
+  );
 
   return (
-    <div className="py-4">
+    <div className={cn(" w-full", props.className)}>
       <MapContainer
         key={locationValue}
         center={(center as L.LatLngExpression) || [51, -0.09]}

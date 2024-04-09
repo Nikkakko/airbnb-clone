@@ -66,7 +66,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({}) => {
         )}
       />
 
-      <Map />
+      <Map className="py-4" />
     </>
   );
 };
