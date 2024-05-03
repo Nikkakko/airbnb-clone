@@ -11,8 +11,6 @@ import {
 } from "./ui/card";
 import { formatedPrice } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
-import { DateRange } from "react-day-picker";
 import { addDays } from "date-fns";
 import TotalInputs from "./TotalInputs";
 import { useForm } from "react-hook-form";
@@ -23,47 +21,76 @@ import { Form } from "./ui/form";
 import { Reservation } from "@prisma/client";
 import createReservation from "@/_actions/createReservation";
 import { useToast } from "./ui/use-toast";
+import { LoaderIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useModalStore } from "@/store/modalStore";
 
 interface DatePickerCardProps {
   price: number | null;
+  listingId: string;
   reservations: Reservation[];
 }
 
-const DatePickerCard: React.FC<DatePickerCardProps> = ({ price }) => {
+const DatePickerCard: React.FC<DatePickerCardProps> = ({
+  price,
+  listingId,
+  reservations,
+}) => {
   const [isPending, startTransaction] = React.useTransition();
   const { toast } = useToast();
+  const { onOpen } = useModalStore();
+  const user = useSession().data?.user;
 
   const form = useForm<z.infer<typeof ReservationFormSechema>>({
     resolver: zodResolver(ReservationFormSechema),
     defaultValues: {
       date: {
-        from: new Date(),
-        to: addDays(new Date(), 7),
+        from: undefined,
+        to: undefined,
       },
 
       totalPrice: 0,
-      listingId: "",
+      listingId: listingId || "",
     },
   });
 
   function onSubmit(values: z.infer<typeof ReservationFormSechema>) {
+    if (!user) {
+      return onOpen("login", {});
+    }
     startTransaction(async () => {
-      const result = await createReservation(values);
-      if (result?.error) {
-        toast({
-          title: "Error",
-          description: "An error occurred while creating the reservation",
-        });
-      } else {
+      try {
+        const reserve = await createReservation(values);
+
+        if (reserve?.error) {
+          toast({
+            title: "Error",
+            description: reserve.error as string,
+          });
+          return;
+        }
+
         toast({
           title: "Success",
           description: "Reservation created",
         });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "An error occurred while creating the reservation",
+        });
       }
     });
-
-    console.log(values, "values");
   }
+
+  // get reserved dates
+
+  const reservedDates = reservations.map(reservation => {
+    return {
+      from: new Date(reservation.startDate),
+      to: new Date(reservation.endDate),
+    };
+  });
 
   return (
     <Form {...form}>
@@ -81,14 +108,19 @@ const DatePickerCard: React.FC<DatePickerCardProps> = ({ price }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <DatePickerWithRange />
+            <DatePickerWithRange reservedDates={reservedDates} />
           </CardContent>
           <CardFooter className="flex flex-col space-y-4 items-start">
             <Button
               className="bg-gradient-to-r from-pink-500 to-pink-600 w-full 
               hover:from-pink-600 hover:to-pink-700"
+              disabled={isPending}
             >
-              Reserve
+              {isPending ? (
+                <LoaderIcon className="animate-spin h-5 w-5" />
+              ) : (
+                "Reserve"
+              )}
             </Button>
 
             {/* generate ul list of total */}

@@ -175,6 +175,7 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
           <DatePickerCard
             price={listing.price}
             reservations={listing.reservations}
+            listingId={listing.id}
           />
         </div>
       </div>

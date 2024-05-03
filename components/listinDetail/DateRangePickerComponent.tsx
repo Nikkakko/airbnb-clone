@@ -16,10 +16,14 @@ import { useFormContext } from "react-hook-form";
 import { FormField, FormItem } from "../ui/form";
 
 interface DatePickerWithRangeProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+  extends React.HTMLAttributes<HTMLDivElement> {
+  reservedDates?: DateRange[];
+}
 
-export function DatePickerWithRange({ className }: DatePickerWithRangeProps) {
-  const isReserved = false; // replace with your own logic
+export function DatePickerWithRange({
+  className,
+  reservedDates,
+}: DatePickerWithRangeProps) {
   const { control } = useFormContext();
   return (
     <div className={cn("grid gap-2", className)}>
@@ -61,7 +65,12 @@ export function DatePickerWithRange({ className }: DatePickerWithRangeProps) {
                   selected={{ from: field.value.from!, to: field.value.to }}
                   onSelect={field.onChange}
                   numberOfMonths={2}
-                  disabled={isReserved}
+                  disabled={
+                    reservedDates?.map(({ from, to }) => ({
+                      from,
+                      to,
+                    })) ?? []
+                  }
                 />
               </PopoverContent>
             </Popover>

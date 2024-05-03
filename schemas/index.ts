@@ -70,8 +70,8 @@ export const ReservationFormSechema = z.object({
   date: z
     .object(
       {
-        from: z.date().optional(),
-        to: z.date().optional(),
+        from: z.date(),
+        to: z.date(),
       },
       { required_error: DATE_REQUIRED_ERROR }
     )
