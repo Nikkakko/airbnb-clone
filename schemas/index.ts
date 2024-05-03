@@ -63,3 +63,27 @@ export const RentSchema = z.object({
     message: "Description is required",
   }),
 });
+
+const DATE_REQUIRED_ERROR = "Date is required.";
+
+export const ReservationFormSechema = z.object({
+  date: z
+    .object(
+      {
+        from: z.date().optional(),
+        to: z.date().optional(),
+      },
+      { required_error: DATE_REQUIRED_ERROR }
+    )
+    .refine(date => {
+      return !!date.from;
+    }, DATE_REQUIRED_ERROR),
+
+  totalPrice: z.number().min(1, {
+    message: "Total price is required",
+  }),
+
+  listingId: z.string().min(1, {
+    message: "Listing id is required",
+  }),
+});

@@ -4,13 +4,18 @@ import { addDays } from "date-fns";
 import * as React from "react";
 import { DateRange } from "react-day-picker";
 import { Separator } from "./ui/separator";
+import { useFormContext } from "react-hook-form";
+import { FormField, FormItem } from "./ui/form";
 
 interface TotalInputsProps {
   price: number | null;
-  date?: DateRange | undefined;
 }
 
-const TotalInputs: React.FC<TotalInputsProps> = ({ price, date }) => {
+const TotalInputs: React.FC<TotalInputsProps> = ({ price }) => {
+  const { control, getValues, setValue } = useFormContext();
+
+  const date = getValues("date");
+
   const from = date?.from ? date.from : new Date();
   const to = date?.to ? date.to : addDays(new Date(), 7);
 
@@ -38,6 +43,15 @@ const TotalInputs: React.FC<TotalInputsProps> = ({ price, date }) => {
   }, [nightlyPrice]);
 
   const totalPrice = totalInputs.reduce((acc, { price }) => acc + price, 0);
+
+  React.useEffect(() => {
+    setValue("totalPrice", totalPrice);
+
+    //cleanup
+    return () => {
+      setValue("totalPrice", null);
+    };
+  }, [totalPrice, setValue]);
 
   return (
     <ul className="w-full space-y-2">

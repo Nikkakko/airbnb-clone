@@ -54,6 +54,8 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
 }) => {
   const listing = await getListingById(id);
 
+  const isFavorite = listing?.user.favoriteIds.includes(listing.id);
+
   const houseInfo = [
     {
       id: "1",
@@ -87,6 +89,7 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
         title={listing.title}
         listingId={listing.id}
         locationValue={listing.locationValue}
+        isFavorite={isFavorite || false}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4  rounded-xl overflow-hidden">
         <div className="col-span-1">
@@ -169,7 +172,10 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
         <div className="flex items-start gap-6">
           <Map location={listing?.locationValue} className="" />
 
-          <DatePickerCard price={listing.price} />
+          <DatePickerCard
+            price={listing.price}
+            reservations={listing.reservations}
+          />
         </div>
       </div>
     </Shell>

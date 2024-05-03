@@ -4,10 +4,12 @@ import { toggleFavoriteAction } from "@/_actions/toggleFavorite";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useSession } from "next-auth/react";
 import { useModalStore } from "@/store/modalStore";
+import { useToast } from "./ui/use-toast";
+import { Button } from "./ui/button";
 
 interface HeartButtonProps {
   listingId: string;
-  isFavorite?: boolean;
+  isFavorite: boolean;
 }
 
 const HeartButton: React.FC<HeartButtonProps> = ({ listingId, isFavorite }) => {
@@ -15,6 +17,7 @@ const HeartButton: React.FC<HeartButtonProps> = ({ listingId, isFavorite }) => {
   const { onOpen } = useModalStore();
   const user = useSession().data?.user;
   const [isPending, startTransition] = React.useTransition();
+  const { toast } = useToast();
 
   //add stop propagation
   const toggleFavorite = (
@@ -25,35 +28,45 @@ const HeartButton: React.FC<HeartButtonProps> = ({ listingId, isFavorite }) => {
     if (!user) {
       return onOpen("login", {});
     }
-
     setHasFavorited(prev => !prev);
+
     startTransition(async () => {
       try {
         const { hasFavorited, error, success } = await toggleFavoriteAction(
           listingId
         );
+        toast({
+          title: success ? "Success" : "Error",
+          description: success
+            ? hasFavorited
+              ? "Listing added to favorites"
+              : "Listing removed from favorites"
+            : error,
+        });
       } catch (error) {
-        console.error(error);
+        toast({
+          title: "Error",
+          description: "An error occurred while toggling favorite",
+        });
       }
     });
   };
 
   return (
-    <button
+    <Button
+      variant={"ghost"}
       onClick={toggleFavorite}
-      className="relative hover:opacity-80 transition cursor-point disabled:cursor-not-allowed disabled:opacity-50"
+      className="hover:opacity-80 transition cursor-point disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-1"
     >
-      <AiOutlineHeart
-        size={28}
-        className="fill-white absolute -top-[2px] -right-[2px]"
-      />
-      <AiFillHeart
-        size={24}
-        className={
-          hasFavorited || isFavorite ? "fill-rose-500" : "fill-neutral-500/70"
-        }
-      />
-    </button>
+      <div className="flex items-center gap-1">
+        {hasFavorited || isFavorite ? (
+          <AiFillHeart size={24} className="fill-rose-500" />
+        ) : (
+          <AiOutlineHeart size={28} className="fill-black" />
+        )}
+      </div>
+      Save
+    </Button>
   );
 };
 

@@ -5,6 +5,7 @@ import * as React from "react";
 import { Button } from "../ui/button";
 import { ShareIcon } from "lucide-react";
 import HeartButton from "../HeartButton";
+import { useToast } from "../ui/use-toast";
 
 interface HeaderProps {}
 
@@ -12,20 +13,35 @@ const Header = ({
   title,
   listingId,
   locationValue,
+  isFavorite,
 }: {
   title: string;
   listingId: string;
   locationValue: string;
+  isFavorite: boolean;
 }) => {
   const { getByValue } = useCountries();
   const country = getByValue(locationValue as string);
-  //write share functionallity copy to clipboard
+  const { toast } = useToast();
+  const [isCopied, setIsCopied] = React.useState(false);
 
   const handleShare = React.useCallback(() => {
-    navigator.clipboard.writeText(
-      `Check out this listing: ${title} at ${country?.label}, ${country?.region}`
-    );
-  }, [title, country]);
+    // copy link to clipboard
+    navigator.clipboard.writeText(window.location.href);
+
+    // show toast
+
+    toast({
+      title: "Copied",
+      description: "Link copied to clipboard",
+    });
+
+    setIsCopied(true);
+
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+  }, [toast]);
 
   return (
     <div className="flex items-center justify-between pt-6 pb-4">
@@ -45,15 +61,11 @@ const Header = ({
         >
           <div className="flex items-center gap-1">
             <ShareIcon />
-            Share
+            {isCopied ? "Copied" : "Share"}
           </div>
         </Button>
-        <Button asChild variant={"ghost"} className="cursor-pointer ">
-          <div className="flex items-center gap-1">
-            <HeartButton listingId={listingId} />
-            Save
-          </div>
-        </Button>
+
+        <HeartButton listingId={listingId} isFavorite={isFavorite} />
       </div>
     </div>
   );

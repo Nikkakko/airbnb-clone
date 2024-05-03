@@ -1,7 +1,6 @@
 "use client";
-
 import * as React from "react";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -13,56 +12,62 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useFormContext } from "react-hook-form";
+import { FormField, FormItem } from "../ui/form";
 
 interface DatePickerWithRangeProps
-  extends React.HTMLAttributes<HTMLDivElement> {
-  date: DateRange | undefined;
-  setDate: (date: DateRange | undefined) => void;
-}
+  extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function DatePickerWithRange({
-  className,
-  date,
-  setDate,
-}: DatePickerWithRangeProps) {
+export function DatePickerWithRange({ className }: DatePickerWithRangeProps) {
+  const isReserved = false; // replace with your own logic
+  const { control } = useFormContext();
   return (
     <div className={cn("grid gap-2", className)}>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            id="date"
-            variant={"outline"}
-            className={cn(
-              "w-[300px] justify-start text-left font-normal",
-              !date && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
-                </>
-              ) : (
-                format(date.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Pick a date</span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            initialFocus
-            mode="range"
-            defaultMonth={date?.from}
-            selected={date}
-            onSelect={setDate}
-            numberOfMonths={2}
-          />
-        </PopoverContent>
-      </Popover>
+      <FormField
+        name="date"
+        control={control}
+        render={({ field }) => (
+          <FormItem>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="date"
+                  variant={"outline"}
+                  className={cn(
+                    "w-[300px] justify-start text-left font-normal",
+                    !field.value && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {field?.value.from ? (
+                    field.value.to ? (
+                      <>
+                        {format(field.value.from, "LLL dd, y")} -{" "}
+                        {format(field.value.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(field.value.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={field.value.from}
+                  selected={{ from: field.value.from!, to: field.value.to }}
+                  onSelect={field.onChange}
+                  numberOfMonths={2}
+                  disabled={isReserved}
+                />
+              </PopoverContent>
+            </Popover>
+          </FormItem>
+        )}
+      />
     </div>
   );
 }

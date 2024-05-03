@@ -23,6 +23,7 @@ export async function getListingById(id: string) {
 
       include: {
         user: true,
+        reservations: true,
       },
     });
 
@@ -32,5 +33,28 @@ export async function getListingById(id: string) {
     return listing;
   } catch (error) {
     return null;
+  }
+}
+
+export async function getUserReservations(listingId: string) {
+  const user = await currentUser();
+  if (!user) {
+    return [];
+  }
+
+  try {
+    const reservations = await db.reservation.findMany({
+      where: {
+        userId: user.id,
+        listingId,
+      },
+      orderBy: {
+        startDate: "desc",
+      },
+    });
+
+    return reservations;
+  } catch (error) {
+    return [];
   }
 }
