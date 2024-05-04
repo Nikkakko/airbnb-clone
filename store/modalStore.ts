@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type ModalType = "login" | "register" | "rent";
+type ModalType = "login" | "register" | "rent" | "review";
 
 interface ModalData {
   isEdit?: boolean;

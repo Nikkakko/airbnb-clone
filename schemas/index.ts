@@ -87,3 +87,17 @@ export const ReservationFormSechema = z.object({
     message: "Listing id is required",
   }),
 });
+
+export const ReviewSchema = z.object({
+  rating: z.string().refine(
+    rating => {
+      // return number between 1 and 5
+      const num = parseInt(rating);
+      return num;
+    },
+    { message: "Rating is required" }
+  ),
+  comment: z.string().min(1, {
+    message: "Comment is required",
+  }),
+});

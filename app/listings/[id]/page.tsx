@@ -8,12 +8,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { Separator } from "@/components/ui/separator";
 
-import { getListingById } from "@/lib/getData";
+import { getListingById, getReviews } from "@/lib/getData";
 import { Metadata, ResolvingMetadata } from "next";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { DatePickerWithRange } from "@/components/listinDetail/DateRangePickerComponent";
+
 import DatePickerCard from "@/components/DatePickerCard";
+import ReviewSection from "@/components/ReviewSection";
+
+import AddReviewModal from "@/components/modals/AddReview";
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
 });
@@ -53,6 +56,7 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
   params: { id },
 }) => {
   const listing = await getListingById(id);
+  const reviews = await getReviews(id);
 
   const isFavorite = listing?.user.favoriteIds.includes(listing.id);
 
@@ -126,7 +130,7 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
           ))}
         </div>
       </div>
-      <div className="mt-4 flex flex-col gap-2">
+      <div className="mt-4 flex flex-col gap-2 ">
         {/* add author */}
         <div className="flex items-center gap-2">
           {listing.user ? (
@@ -171,13 +175,29 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
 
         <div className="flex items-start gap-6">
           <Map location={listing?.locationValue} className="" />
-        
 
           <DatePickerCard
             price={listing.price}
             reservations={listing.reservations}
             listingId={listing.id}
           />
+        </div>
+      </div>
+      <Separator className="my-6" />
+      <div className="flex flex-col gap-4 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 lg:grid-cols-4">
+          {reviews.map(review => (
+            <ReviewSection key={review.id} review={review} />
+          ))}
+        </div>
+        <div className="flex flex-col gap-1 items-start">
+          {reviews.length === 0 && (
+            <>
+              <p className="text-lg font-bold">No reviews yet</p>
+              <p className="text-gray-500">Be the first to review this place</p>
+            </>
+          )}
+          <AddReviewModal listingId={listing.id} />
         </div>
       </div>
     </Shell>

@@ -24,6 +24,7 @@ export async function getListingById(id: string) {
       include: {
         user: true,
         reservations: true,
+        reviews: true,
       },
     });
 
@@ -77,4 +78,17 @@ export async function getUserReservationsAction(userId: string | undefined) {
     console.error("Failed to get reservations", error);
     return [];
   }
+}
+
+export async function getReviews(listingId: string) {
+  const reviews = await db.review.findMany({
+    where: {
+      listingId,
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  return reviews;
 }
