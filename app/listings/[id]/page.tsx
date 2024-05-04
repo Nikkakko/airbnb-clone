@@ -171,6 +171,7 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
 
         <div className="flex items-start gap-6">
           <Map location={listing?.locationValue} className="" />
+        
 
           <DatePickerCard
             price={listing.price}

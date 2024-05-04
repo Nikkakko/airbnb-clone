@@ -63,7 +63,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
                     quality={100}
                     width={200}
                     height={150}
-                    className="object-cover min-w-[200px] h-[200px] w-full group-hover:scale-110 transition "
+                    className="object-cover min-w-[200px] h-[200px] w-full  "
                     sizes="200px"
                   />
                 </Link>
@@ -86,6 +86,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
             <HeartButton
               listingId={data.id}
               isFavorite={user?.favoriteIds?.includes(data.id) || false}
+              slider
             />
           </div>
         </Carousel>

@@ -25,6 +25,15 @@ export function DatePickerWithRange({
   reservedDates,
 }: DatePickerWithRangeProps) {
   const { control } = useFormContext();
+
+  const disabledDates = [
+    { before: new Date() },
+    ...(reservedDates || []).map(date => ({
+      from: date.from,
+      to: date.to,
+    })),
+  ];
+
   return (
     <div className={cn("grid gap-2", className)}>
       <FormField
@@ -65,12 +74,7 @@ export function DatePickerWithRange({
                   selected={{ from: field.value.from!, to: field.value.to }}
                   onSelect={field.onChange}
                   numberOfMonths={2}
-                  disabled={
-                    reservedDates?.map(({ from, to }) => ({
-                      from,
-                      to,
-                    })) ?? []
-                  }
+                  disabled={disabledDates}
                 />
               </PopoverContent>
             </Popover>

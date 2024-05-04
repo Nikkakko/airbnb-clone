@@ -6,13 +6,19 @@ import { useSession } from "next-auth/react";
 import { useModalStore } from "@/store/modalStore";
 import { useToast } from "./ui/use-toast";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 interface HeartButtonProps {
   listingId: string;
   isFavorite: boolean;
+  slider?: boolean;
 }
 
-const HeartButton: React.FC<HeartButtonProps> = ({ listingId, isFavorite }) => {
+const HeartButton: React.FC<HeartButtonProps> = ({
+  listingId,
+  isFavorite,
+  slider,
+}) => {
   const [hasFavorited, setHasFavorited] = React.useState(false);
   const { onOpen } = useModalStore();
   const user = useSession().data?.user;
@@ -52,11 +58,27 @@ const HeartButton: React.FC<HeartButtonProps> = ({ listingId, isFavorite }) => {
     });
   };
 
+  if (slider) {
+    return (
+      <button onClick={toggleFavorite} className="hover:scale-95">
+        <div className="flex items-center gap-1">
+          {hasFavorited || isFavorite ? (
+            <AiFillHeart size={24} className="fill-rose-500" />
+          ) : (
+            <AiOutlineHeart size={28} className="text-white" />
+          )}
+        </div>
+      </button>
+    );
+  }
+
   return (
     <Button
       variant={"ghost"}
       onClick={toggleFavorite}
-      className="hover:opacity-80 transition cursor-point disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-1"
+      className={cn(
+        "hover:opacity-80 transition cursor-point disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-1"
+      )}
     >
       <div className="flex items-center gap-1">
         {hasFavorited || isFavorite ? (

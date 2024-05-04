@@ -10,9 +10,8 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { useFormContext } from "react-hook-form";
 import useCountries from "@/hooks/useCountries";
-import NoSsr from "@/hooks/noSsr";
-import MapLoader from "./MapLoader";
 import { cn } from "@/lib/utils";
+import { LoaderIcon } from "lucide-react";
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;
@@ -38,6 +37,8 @@ const Map: React.FC<MapProps> = ({ location, ...props }) => {
   const center = getCoordinates(
     (location as string) || (locationValue as string)
   );
+
+  //set loader if location is not available
 
   return (
     <div className={cn(" w-full", props.className)}>
