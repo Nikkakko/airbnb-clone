@@ -21,9 +21,10 @@ import { Form } from "./ui/form";
 import { Reservation } from "@prisma/client";
 import createReservation from "@/_actions/createReservation";
 import { useToast } from "./ui/use-toast";
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon, Router } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useModalStore } from "@/store/modalStore";
+import { useRouter } from "next/navigation";
 
 interface DatePickerCardProps {
   price: number | null;
@@ -40,6 +41,7 @@ const DatePickerCard: React.FC<DatePickerCardProps> = ({
   const { toast } = useToast();
   const { onOpen } = useModalStore();
   const user = useSession().data?.user;
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof ReservationFormSechema>>({
     resolver: zodResolver(ReservationFormSechema),
@@ -74,6 +76,8 @@ const DatePickerCard: React.FC<DatePickerCardProps> = ({
           title: "Success",
           description: "Reservation created",
         });
+
+        router.push("/trips");
       } catch (error) {
         toast({
           title: "Error",

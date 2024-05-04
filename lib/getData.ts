@@ -58,3 +58,23 @@ export async function getUserReservations(listingId: string) {
     return [];
   }
 }
+
+export async function getUserReservationsAction(userId: string | undefined) {
+  try {
+    const reservations = await db.reservation.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        listing: true,
+      },
+      orderBy: {
+        startDate: "desc",
+      },
+    });
+    return reservations;
+  } catch (error) {
+    console.error("Failed to get reservations", error);
+    return [];
+  }
+}

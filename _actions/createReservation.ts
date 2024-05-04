@@ -80,27 +80,57 @@ export default async function createReservation(
         startDate: data.date.from as Date,
       },
     });
-    await db.listing.update({
-      where: {
-        id: data.listingId,
-      },
-      data: {
-        reservations: {
-          create: {
-            userId: user.id as string,
-            startDate: data.date.from as Date,
-            endDate: data.date.to as Date,
-            totalPrice: data.totalPrice,
-          },
-        },
-      },
-    });
 
     //revalidate
     revalidatePath(`/listings/${data.listingId}`);
   } catch (error) {
     return {
       error: "An error occurred while creating the reservation",
+    };
+  }
+}
+
+export async function removeReservation(reservationId: string) {
+  const user = await currentUser();
+
+  if (!user) {
+    return {
+      error: "You must be logged in to remove a reservation",
+    };
+  }
+
+  //prevent user from deleting other users reservations
+  const reservation = await db.reservation.findUnique({
+    where: {
+      id: reservationId,
+    },
+  });
+
+  if (!reservation || reservation.userId !== user.id) {
+    return {
+      error: "You can't remove this reservation",
+    };
+  }
+
+  //prevent user from deleting reservation if the start date is today
+  if (new Date(reservation.startDate) <= new Date()) {
+    return {
+      error: "You can't remove a reservation that has already started",
+    };
+  }
+
+  try {
+    await db.reservation.delete({
+      where: {
+        id: reservationId,
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/trips");
+  } catch (error) {
+    return {
+      error: "An error occurred while removing the reservation",
     };
   }
 }

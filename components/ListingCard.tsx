@@ -17,12 +17,21 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Link from "next/link";
-
+import { formatDate } from "date-fns";
+import { Button } from "./ui/button";
+import { removeReservation } from "@/_actions/createReservation";
+import { useToast } from "./ui/use-toast";
+import { LoaderIcon } from "lucide-react";
 interface ListingCardProps {
   data: Listing;
+  reservation?: {
+    startDate: Date;
+    endDate: Date;
+    reservationId: string;
+  };
 }
 
-const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
+const ListingCard: React.FC<ListingCardProps> = ({ data, reservation }) => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
@@ -30,10 +39,13 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
   const user = session.data?.user;
   const router = useRouter();
   const { getByValue } = useCountries();
+  const { toast } = useToast();
+  const [isPending, startTransition] = React.useTransition();
 
   const location = getByValue(data.locationValue);
-
   const dataPrice = formatedPrice(data.price);
+
+  //prevent canceling reservation if the start date is today
 
   React.useEffect(() => {
     if (!api) {
@@ -94,12 +106,52 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
         <div className="font-semibold text-lg">
           {location?.region}, {location?.label}
         </div>
-        <div className="font-light text-neutral-500">{data.category}</div>
+        <div className="flex items-center gap-1">
+          {!reservation ? (
+            <p className="font-light text-neutral-500">{data.category}</p>
+          ) : (
+            // add start-end date
+            <p className="font-light text-neutral-500">
+              {formatDate(reservation.startDate, " MMM dd")} -{" "}
+              {formatDate(reservation.endDate, " MMM dd")}
+            </p>
+          )}
+        </div>
         <div className="flex flex-row items-center gap-1">
           <div className="font-semibold">{dataPrice}</div>
-          <div className="text-neutral-500">/ night</div>
+          {!reservation && <div className="text-neutral-500">/ night</div>}
         </div>
       </div>
+      {reservation && (
+        //cancel reservation
+        <Button
+          variant="destructive"
+          className="w-full mt-2 h-10"
+          onClick={() => {
+            startTransition(async () => {
+              const res = await removeReservation(reservation.reservationId);
+              if (res?.error) {
+                toast({
+                  title: "Error",
+                  description: res.error,
+                });
+                return;
+              }
+              toast({
+                title: "Reservation canceled",
+                description: "Your reservation has been canceled",
+              });
+            });
+          }}
+          disabled={isPending}
+        >
+          {isPending ? (
+            <LoaderIcon className="animate-spin h-5 w-5" />
+          ) : (
+            "Cancel Reservation"
+          )}
+        </Button>
+      )}
     </div>
   );
 };

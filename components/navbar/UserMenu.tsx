@@ -27,11 +27,7 @@ const loggedInItems = [
     label: "My favorites",
     href: "/favorites",
   },
-  {
-    id: "3",
-    label: "My reservations",
-    href: "/reservations",
-  },
+
   {
     id: "4",
     label: "My properties",
@@ -61,6 +57,14 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
       onOpen("rent", {});
     }
   }, [user, onOpen]);
+
+  const handleRedirect = React.useCallback(
+    (href: string) => {
+      router.push(href);
+      setIsOpen(false);
+    },
+    [router]
+  );
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
@@ -103,7 +107,7 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
               {loggedInItems.map(item => (
                 <MenuItem
                   key={item.id}
-                  onClick={() => router.push(item.href)}
+                  onClick={() => handleRedirect(item.href)}
                   label={item.label}
                 />
               ))}
