@@ -10,6 +10,11 @@ import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Separator } from "../ui/separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const loggedInItems = [
   {
@@ -57,90 +62,84 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
     }
   }, [user, onOpen]);
   return (
-    <div className="relative">
-      <div className="flex flex-row items-center gap-3">
-        <div
-          onClick={handleRent}
-          className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer"
-        >
-          Airbnb your home
-        </div>
-        <div
-          onClick={toggleOpen}
-          className="p-4 md:py-1 md:px-2 border-[1px]   border-neutral-200  flex  flex-row  items-center  gap-3  rounded-full  cursor-pointer  hover:shadow-md  transition"
-        >
-          <AiOutlineMenu size={18} />
-          <div className="hidden md:block">
-            <Avatar>
-              <AvatarImage
-                src={user?.image as string}
-                alt={user?.name as string}
-              />
-              <AvatarFallback>
-                <Image
-                  src={"/images/placeholder.jpg"}
-                  alt={"user-avatar"}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-              </AvatarFallback>
-            </Avatar>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <div className="flex flex-row items-center gap-3">
+          <div
+            onClick={handleRent}
+            className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer"
+          >
+            Airbnb your home
           </div>
-        </div>
-      </div>
-
-      {isOpen && (
-        <div
-          className={cn(
-            "absolute rounded-xl shadow-mdw-[40vw] md:w-3/4  bg-white overflow-hidden right-0 top-16 text-sm shadow-md",
-            isPending ? "pointer-events-none" : "pointer-events-auto"
-          )}
-        >
-          <div className="flex flex-col cursor-pointer">
-            {user ? (
-              <>
-                {loggedInItems.map(item => (
-                  <MenuItem
-                    key={item.id}
-                    onClick={() => router.push(item.href)}
-                    label={item.label}
+          <div
+            onClick={toggleOpen}
+            className="p-4 md:py-1 md:px-2 border-[1px]   border-neutral-200  flex  flex-row  items-center  gap-3  rounded-full  cursor-pointer  hover:shadow-md  transition"
+          >
+            <AiOutlineMenu size={18} />
+            <div className="hidden md:block">
+              <Avatar>
+                <AvatarImage
+                  src={user?.image as string}
+                  alt={user?.name as string}
+                />
+                <AvatarFallback>
+                  <Image
+                    src={"/images/placeholder.jpg"}
+                    alt={"user-avatar"}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
                   />
-                ))}
-                <MenuItem label="Airbnb your home" onClick={handleRent} />
-                <Separator />
-                <MenuItem
-                  label="Logout"
-                  onClick={() => {
-                    startTransition(() => {
-                      logout();
-                    });
-                    setIsOpen(false);
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                <MenuItem
-                  onClick={() => {
-                    onOpen("login", {});
-                    setIsOpen(false);
-                  }}
-                  label={"Login"}
-                />
-                <MenuItem
-                  onClick={() => {
-                    onOpen("register", {});
-                    setIsOpen(false);
-                  }}
-                  label={"Sign up"}
-                />
-              </>
-            )}
+                </AvatarFallback>
+              </Avatar>
+            </div>
           </div>
         </div>
-      )}
-    </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <div className="flex flex-col cursor-pointer">
+          {user ? (
+            <>
+              {loggedInItems.map(item => (
+                <MenuItem
+                  key={item.id}
+                  onClick={() => router.push(item.href)}
+                  label={item.label}
+                />
+              ))}
+              <MenuItem label="Airbnb your home" onClick={handleRent} />
+              <Separator />
+              <MenuItem
+                label="Logout"
+                onClick={() => {
+                  startTransition(() => {
+                    logout();
+                  });
+                  setIsOpen(false);
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <MenuItem
+                onClick={() => {
+                  onOpen("login", {});
+                  setIsOpen(false);
+                }}
+                label={"Login"}
+              />
+              <MenuItem
+                onClick={() => {
+                  onOpen("register", {});
+                  setIsOpen(false);
+                }}
+                label={"Sign up"}
+              />
+            </>
+          )}
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
