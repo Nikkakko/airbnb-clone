@@ -15,7 +15,10 @@ interface HomeProps {
 export default async function Home({ params, searchParams }: HomeProps) {
   const listings = await getAllListing();
 
-  const categoryParam = searchParams.category as string | undefined;
+  const categoryParam =
+    typeof searchParams.category === "string"
+      ? searchParams.category
+      : undefined;
 
   //filter by category
   const filteredListings = listings.filter(listing => {
@@ -23,7 +26,7 @@ export default async function Home({ params, searchParams }: HomeProps) {
       return true;
     }
 
-    return listing.category === categoryParam;
+    return listing.category.toLowerCase() === categoryParam.toLowerCase();
   });
 
   const isEmpty = filteredListings.length === 0;

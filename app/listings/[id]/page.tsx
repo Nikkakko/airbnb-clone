@@ -8,7 +8,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { Separator } from "@/components/ui/separator";
 
-import { getListingById, getReviews } from "@/lib/getData";
+import {
+  getListingById,
+  getReviews,
+  getUserFavoriteListings,
+} from "@/lib/getData";
 import { Metadata, ResolvingMetadata } from "next";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -17,6 +21,7 @@ import DatePickerCard from "@/components/DatePickerCard";
 import ReviewSection from "@/components/ReviewSection";
 
 import AddReviewModal from "@/components/modals/AddReview";
+import { currentUser } from "@/lib/auth";
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
 });
@@ -55,10 +60,21 @@ export async function generateMetadata(
 const ListingDetail: React.FC<ListingDetailProps> = async ({
   params: { id },
 }) => {
-  const listing = await getListingById(id);
-  const reviews = await getReviews(id);
+  //reslove all promises
+  const [listing, reviews, isFavorite] = await Promise.all([
+    getListingById(id),
+    getReviews(id),
+    getUserFavoriteListings(),
+  ]);
 
-  const isFavorite = listing?.user.favoriteIds.includes(listing.id);
+  if (!listing) {
+    return (
+      <EmptyState
+        title="Listing not found"
+        subtitle="The listing you are looking for does not exist."
+      />
+    );
+  }
 
   const houseInfo = [
     {
@@ -86,6 +102,7 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
       />
     );
   }
+
   return (
     <Shell variant="container" className="py-24 flex flex-col">
       {/* add images grid 1 left 4right */}
@@ -93,7 +110,7 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
         title={listing.title}
         listingId={listing.id}
         locationValue={listing.locationValue}
-        isFavorite={isFavorite || false}
+        isFavorite={!!isFavorite || false}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4  rounded-xl overflow-hidden">
         <div className="col-span-1">

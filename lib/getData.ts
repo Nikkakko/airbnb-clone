@@ -41,6 +41,31 @@ export async function getListingById(id: string) {
   }
 }
 
+export async function getUserFavoriteListings() {
+  const user = await currentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  try {
+    const favoriteListings = await db.listing.findMany({
+      where: {
+        id: {
+          in: user.favoriteIds,
+        },
+      },
+    });
+
+    //return favoriteListings as boolean
+    revalidatePath("/");
+    return !!favoriteListings;
+  } catch (error) {
+    console.error("Failed to get favorite listings", error);
+    return getErrorMessage(error);
+  }
+}
+
 export async function getUserReservations(listingId: string) {
   const user = await currentUser();
   if (!user) {

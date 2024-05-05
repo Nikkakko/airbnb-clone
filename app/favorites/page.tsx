@@ -1,5 +1,6 @@
 import EmptyState from "@/components/EmptyState";
 import ListingCard from "@/components/ListingCard";
+import LoginButton from "@/components/LoginButton";
 import ListingCardSkeleton from "@/components/skeletons/ListingCardSkeleton";
 import { Shell } from "@/components/ui/Shell";
 import { currentUser } from "@/lib/auth";
@@ -14,11 +15,15 @@ const FavoritesPage: React.FC<FavoritesPageProps> = async ({}) => {
 
   if (!user) {
     return (
-      <Shell variant="container" className="py-24">
+      <Shell
+        variant="container"
+        className="py-24 justify-center items-center flex flex-col space-y-4"
+      >
         <h1 className="text-3xl font-bold text-center">Favorites</h1>
         <p className="text-center">
           You need to be logged in to view your favorites.
         </p>
+        <LoginButton />
       </Shell>
     );
   }

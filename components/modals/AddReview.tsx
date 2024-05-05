@@ -32,6 +32,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { useModalStore } from "@/store/modalStore";
+import { useSession } from "next-auth/react";
 
 type AddReviewFormValues = z.infer<typeof ReviewSchema>;
 
@@ -41,7 +42,7 @@ interface AddReviewProps {
 
 const AddReview: React.FC<AddReviewProps> = ({ listingId }) => {
   const [isPending, startTranstion] = React.useTransition();
-  const { isOpen, onClose, type } = useModalStore();
+  const { isOpen, onClose, type, onOpen } = useModalStore();
   const { toast } = useToast();
 
   const form = useForm<AddReviewFormValues>({

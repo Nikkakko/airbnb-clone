@@ -15,7 +15,7 @@ const CategoryBox: React.FC<CategoryBoxProps> = ({ category, selected }) => {
 
   const handleClick = React.useCallback(() => {
     const currentCategory = params.get("category");
-    const newCategory = category.label;
+    const newCategory = category.label.toLowerCase();
     const query =
       currentCategory === newCategory ? {} : { category: newCategory };
 
