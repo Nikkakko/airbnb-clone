@@ -22,17 +22,27 @@ const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
 });
 
-interface CountrySelectProps {}
+interface CountrySelectProps {
+  searchModal?: boolean;
+}
 
-const CountrySelect: React.FC<CountrySelectProps> = ({}) => {
+const CountrySelect: React.FC<CountrySelectProps> = ({
+  searchModal = false,
+}) => {
   const { control } = useFormContext();
   const { getAll } = useCountries();
 
   return (
     <>
       <Heading
-        title="Where is your place located?"
-        subtitle="Help guests find your place easily."
+        title={
+          searchModal ? "Where are you going?" : "Where is your place located?"
+        }
+        subtitle={
+          searchModal
+            ? "Find your next destination"
+            : "Help guests find your place easily."
+        }
       />
       <FormField
         name="location"

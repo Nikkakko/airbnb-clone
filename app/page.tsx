@@ -14,9 +14,19 @@ interface HomeProps {
 
 export default async function Home({ params, searchParams }: HomeProps) {
   const listings = await getAllListing();
-  const isEmpty = listings.length === 0;
 
   const categoryParam = searchParams.category as string | undefined;
+
+  //filter by category
+  const filteredListings = listings.filter(listing => {
+    if (!categoryParam) {
+      return true;
+    }
+
+    return listing.category === categoryParam;
+  });
+
+  const isEmpty = filteredListings.length === 0;
 
   return (
     <main className="flex flex-col flex-1">
@@ -27,7 +37,7 @@ export default async function Home({ params, searchParams }: HomeProps) {
       ) : (
         <Shell variant="container" as="section">
           <div className="pt-24 grid  grid-cols-1  sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5  gap-8">
-            {listings?.map(listing => (
+            {filteredListings?.map(listing => (
               <React.Suspense
                 key={listing.id}
                 fallback={<ListingCardSkeleton />}

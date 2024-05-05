@@ -6,10 +6,11 @@ interface ListingCardSkeletonProps {}
 const ListingCardSkeleton: React.FC<ListingCardSkeletonProps> = ({}) => {
   return (
     <div className="flex flex-col">
-      <Skeleton className="h-48 w-48" />
-      <div className="flex flex-col gap-2 p-4">
-        <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="h-4 w-1/4" />
+      <Skeleton className="h-48 w-56" />
+      <div className="flex flex-col gap-2  mt-2">
+        <Skeleton className="h-4 w-36" />
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-4 w-36" />
       </div>
     </div>
   );

@@ -11,14 +11,18 @@ import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
 import { CircleMinus, CirclePlus } from "lucide-react";
 
-interface InfoInputProps {}
+interface InfoInputProps {
+  searchModal?: boolean;
+}
 
-const InfoInput: React.FC<InfoInputProps> = ({}) => {
+const InfoInput: React.FC<InfoInputProps> = ({ searchModal = false }) => {
   const { control } = useFormContext();
   return (
     <div className="flex flex-col gap-6">
       <Heading
-        title="Tell us more about your place"
+        title={
+          searchModal ? "More Infomration" : "Tell us more about your place"
+        }
         subtitle="Fill in the details"
       />
 

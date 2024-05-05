@@ -101,3 +101,19 @@ export const ReviewSchema = z.object({
     message: "Comment is required",
   }),
 });
+
+export const SearchSchema = z.object({
+  location: z.string().min(1, {
+    message: "Location is required",
+  }),
+
+  guestCount: z.number().min(1, {
+    message: "Guest count is required",
+  }),
+  roomCount: z.number().min(1, {
+    message: "Room count is required",
+  }),
+  bathroomCount: z.number().min(1, {
+    message: "Bathroom count is required",
+  }),
+});

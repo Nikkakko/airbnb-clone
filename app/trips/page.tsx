@@ -1,5 +1,6 @@
 import EmptyState from "@/components/EmptyState";
 import ListingCard from "@/components/ListingCard";
+import ListingCardSkeleton from "@/components/skeletons/ListingCardSkeleton";
 import { Shell } from "@/components/ui/Shell";
 import { currentUser } from "@/lib/auth";
 import { getUserReservations, getUserReservationsAction } from "@/lib/getData";
@@ -42,15 +43,19 @@ const PageTrips: React.FC<PageTripsProps> = async ({}) => {
 
         <div className="grid grid-cols-1 gap-2 md:gap-3 xl:gap-4 md:grid-cols-2 xl:grid-cols-4">
           {reservations.map(reservation => (
-            <ListingCard
+            <React.Suspense
               key={reservation.id}
-              data={reservation.listing}
-              reservation={{
-                startDate: reservation.startDate,
-                endDate: reservation.endDate,
-                reservationId: reservation.id,
-              }}
-            />
+              fallback={<ListingCardSkeleton />}
+            >
+              <ListingCard
+                data={reservation.listing}
+                reservation={{
+                  startDate: reservation.startDate,
+                  endDate: reservation.endDate,
+                  reservationId: reservation.id,
+                }}
+              />
+            </React.Suspense>
           ))}
         </div>
       </div>

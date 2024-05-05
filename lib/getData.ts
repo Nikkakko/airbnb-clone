@@ -1,5 +1,9 @@
 import db from "@/lib/db";
 import { currentUser } from "./auth";
+import { SearchSchema } from "@/schemas";
+import { z } from "zod";
+import { getErrorMessage } from "./handle-error";
+import { revalidatePath } from "next/cache";
 
 export async function getAllListing() {
   try {
@@ -123,5 +127,49 @@ export async function getFavorites() {
     return favorites;
   } catch (error) {
     console.error("Failed to get favorites", error);
+  }
+}
+
+export async function getSearchResults(
+  searchParams: z.infer<typeof SearchSchema> | undefined
+) {
+  if (!searchParams) return console.error("No search params");
+
+  const { location, guestCount, roomCount, bathroomCount } = searchParams;
+
+  const parsedValue = SearchSchema.safeParse(searchParams);
+
+  if (!parsedValue.success) {
+    return {
+      error: parsedValue.error.errors,
+    };
+  }
+
+  //guest room and bathroomCount shuld be less then listing count
+
+  try {
+    const listings = await db.listing.findMany({
+      where: {
+        guestCount: {
+          gte: guestCount,
+        },
+        roomCount: {
+          gte: roomCount,
+        },
+        bathroomCount: {
+          gte: bathroomCount,
+        },
+        locationValue: {
+          mode: "insensitive",
+          contains: location.toLowerCase(),
+        },
+      },
+    });
+
+    revalidatePath("/search");
+    return listings;
+  } catch (error) {
+    console.error("Failed to get search results", error);
+    return getErrorMessage(error);
   }
 }

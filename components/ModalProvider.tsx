@@ -5,6 +5,7 @@ import LoginModal from "./modals/LoginModal";
 import RegisterModal from "./modals/RegisterModal";
 import RentModal from "./modals/RentModal";
 import AddReviewModal from "./modals/AddReview";
+import CommandModal from "./modals/CommandModal";
 
 const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -22,6 +23,7 @@ const ModalProvider = () => {
       <RegisterModal />
       <RentModal />
       <AddReviewModal />
+      <CommandModal />
     </>
   );
 };

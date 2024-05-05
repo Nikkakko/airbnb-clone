@@ -36,7 +36,7 @@ import { useModalStore } from "@/store/modalStore";
 type AddReviewFormValues = z.infer<typeof ReviewSchema>;
 
 interface AddReviewProps {
-  listingId: string;
+  listingId?: string;
 }
 
 const AddReview: React.FC<AddReviewProps> = ({ listingId }) => {
@@ -59,7 +59,7 @@ const AddReview: React.FC<AddReviewProps> = ({ listingId }) => {
     startTranstion(async () => {
       // Do something after the transition
       try {
-        const res = await addReviewAction(values, listingId);
+        const res = await addReviewAction(values, listingId as string);
         if (res.error) {
           toast({
             title: "An error occurred",

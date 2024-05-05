@@ -1,5 +1,6 @@
 import EmptyState from "@/components/EmptyState";
 import ListingCard from "@/components/ListingCard";
+import ListingCardSkeleton from "@/components/skeletons/ListingCardSkeleton";
 import { Shell } from "@/components/ui/Shell";
 import { currentUser } from "@/lib/auth";
 import { getFavorites } from "@/lib/getData";
@@ -44,11 +45,11 @@ const FavoritesPage: React.FC<FavoritesPageProps> = async ({}) => {
         </div>
 
         <div className="grid grid-cols-1 gap-2 md:gap-3 xl:gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <React.Suspense fallback={<CardLoading />}>
-            {favorites?.map(listing => (
-              <ListingCard data={listing} key={listing.id} />
-            ))}
-          </React.Suspense>
+          {favorites?.map(listing => (
+            <React.Suspense fallback={<ListingCardSkeleton />} key={listing.id}>
+              <ListingCard data={listing} />
+            </React.Suspense>
+          ))}
         </div>
       </div>
     </Shell>
@@ -56,9 +57,3 @@ const FavoritesPage: React.FC<FavoritesPageProps> = async ({}) => {
 };
 
 export default FavoritesPage;
-
-const CardLoading = () => {
-  return (
-    <div className="animate-pulse bg-gray-200 rounded-lg h-96 w-full"></div>
-  );
-};
