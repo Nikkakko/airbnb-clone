@@ -92,3 +92,36 @@ export async function getReviews(listingId: string) {
 
   return reviews;
 }
+
+export async function getFavorites() {
+  const user = await currentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  //get users favorite ids from the database and find the listings
+  const getUser = await db.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
+
+  if (!getUser) {
+    return null;
+  }
+
+  try {
+    const favorites = await db.listing.findMany({
+      where: {
+        id: {
+          in: getUser.favoriteIds,
+        },
+      },
+    });
+
+    return favorites;
+  } catch (error) {
+    console.error("Failed to get favorites", error);
+  }
+}

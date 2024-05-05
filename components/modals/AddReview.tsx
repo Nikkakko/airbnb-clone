@@ -1,6 +1,5 @@
 "use client";
 import { ReviewSchema } from "@/schemas";
-import { useModalStore } from "@/store/modalStore";
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -32,6 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useModalStore } from "@/store/modalStore";
 
 type AddReviewFormValues = z.infer<typeof ReviewSchema>;
 
@@ -40,9 +40,8 @@ interface AddReviewProps {
 }
 
 const AddReview: React.FC<AddReviewProps> = ({ listingId }) => {
-  const { type, isOpen, onClose, data } = useModalStore();
-  const isModalOpen = type === "review" && isOpen;
   const [isPending, startTranstion] = React.useTransition();
+  const { isOpen, onClose, type } = useModalStore();
   const { toast } = useToast();
 
   const form = useForm<AddReviewFormValues>({
@@ -56,10 +55,6 @@ const AddReview: React.FC<AddReviewProps> = ({ listingId }) => {
   const ratings = ["1", "2", "3", "4", "5"];
 
   function onSubmit(values: AddReviewFormValues) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    addReviewAction(values, listingId);
-
     // Start a pending transition
     startTranstion(async () => {
       // Do something after the transition
@@ -91,7 +86,7 @@ const AddReview: React.FC<AddReviewProps> = ({ listingId }) => {
   }, [form, onClose]);
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={handleClose}>
       <DialogTrigger asChild>
         <Button>Add Review</Button>
       </DialogTrigger>

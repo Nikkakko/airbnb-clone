@@ -61,7 +61,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ review }) => {
       <CardHeader className="flex items-start flex-row gap-2  space-y-0">
         <Avatar className="w-6 h-6">
           <AvatarImage src={image as string} className="" />
-          <AvatarFallback>User</AvatarFallback>
+          <AvatarFallback>{name?.charAt(0) || "U"}</AvatarFallback>
         </Avatar>
         <CardTitle className="text-xl">{name?.split(" ")[0]}</CardTitle>
       </CardHeader>

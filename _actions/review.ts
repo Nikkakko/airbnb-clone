@@ -40,6 +40,20 @@ export async function addReviewAction(
     };
   }
 
+  //prevent user from adding multiple reviews
+  const existingReview = await db.review.findFirst({
+    where: {
+      userId: user.id,
+      listingId: listingId,
+    },
+  });
+
+  if (existingReview) {
+    return {
+      error: "You have already reviewed this listing",
+    };
+  }
+
   try {
     await db.review.create({
       data: {
