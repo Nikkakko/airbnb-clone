@@ -22,9 +22,7 @@ import ReviewSection from "@/components/ReviewSection";
 
 import AddReviewModal from "@/components/modals/AddReview";
 import { currentUser } from "@/lib/auth";
-const Map = dynamic(() => import("@/components/Map"), {
-  ssr: false,
-});
+import Map from "@/components/Map";
 
 interface ListingDetailProps {
   params: {
@@ -191,7 +189,9 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
         <Separator />
 
         <div className="flex items-start gap-6">
-          <Map location={listing?.locationValue} className="" />
+          <div className="w-full">
+            <Map location={listing?.locationValue} />
+          </div>
 
           <DatePickerCard
             price={listing.price}

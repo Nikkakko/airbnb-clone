@@ -13,7 +13,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useFormContext } from "react-hook-form";
-import { FormField, FormItem } from "../ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  useFormField,
+} from "../ui/form";
 
 interface DatePickerWithRangeProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -67,17 +73,23 @@ export function DatePickerWithRange({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={field.value.from}
-                  selected={{ from: field.value.from!, to: field.value.to }}
-                  onSelect={field.onChange}
-                  numberOfMonths={2}
-                  disabled={disabledDates}
-                />
+                <FormControl>
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={field.value.from}
+                    selected={{
+                      from: field.value.from!,
+                      to: field.value.to,
+                    }}
+                    onSelect={field.onChange}
+                    numberOfMonths={2}
+                    disabled={disabledDates}
+                  />
+                </FormControl>
               </PopoverContent>
             </Popover>
+            <FormMessage />
           </FormItem>
         )}
       />

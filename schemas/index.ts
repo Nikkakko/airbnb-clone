@@ -64,8 +64,6 @@ export const RentSchema = z.object({
   }),
 });
 
-const DATE_REQUIRED_ERROR = "Date is required.";
-
 export const ReservationFormSechema = z.object({
   date: z
     .object(
@@ -73,11 +71,14 @@ export const ReservationFormSechema = z.object({
         from: z.date(),
         to: z.date(),
       },
-      { required_error: DATE_REQUIRED_ERROR }
+      {
+        required_error: "Please select a date range",
+      }
     )
-    .refine(date => {
-      return !!date.from;
-    }, DATE_REQUIRED_ERROR),
+    .refine(date => date.from < date.to, {
+      path: ["date"],
+      message: "End date must be after start date",
+    }),
 
   totalPrice: z.number().min(1, {
     message: "Total price is required",

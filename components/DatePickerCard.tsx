@@ -57,9 +57,6 @@ const DatePickerCard: React.FC<DatePickerCardProps> = ({
   });
 
   function onSubmit(values: z.infer<typeof ReservationFormSechema>) {
-    if (!user) {
-      return onOpen("login", {});
-    }
     startTransaction(async () => {
       try {
         const reserve = await createReservation(values);
@@ -119,6 +116,11 @@ const DatePickerCard: React.FC<DatePickerCardProps> = ({
               className="bg-gradient-to-r from-pink-500 to-pink-600 w-full 
               hover:from-pink-600 hover:to-pink-700"
               disabled={isPending}
+              onClick={() => {
+                if (!user) {
+                  return onOpen("login", {});
+                }
+              }}
             >
               {isPending ? (
                 <LoaderIcon className="animate-spin h-5 w-5" />

@@ -37,8 +37,21 @@ const Map: React.FC<MapProps> = ({ location, ...props }) => {
   const center = getCoordinates(
     (location as string) || (locationValue as string)
   );
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
-  //set loader if location is not available
+  React.useEffect(() => {
+    if (center) {
+      setIsLoaded(true);
+    }
+  }, [center]);
+
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center h-[35vh]">
+        <LoaderIcon className="animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className={cn(" w-full", props.className)}>
