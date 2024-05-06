@@ -19,7 +19,8 @@ const HeartButton: React.FC<HeartButtonProps> = ({
   isFavorite,
   slider,
 }) => {
-  const [hasFavorited, setHasFavorited] = React.useState(false);
+  const [optimisticLikes, addOptimisticLikes] =
+    React.useOptimistic<boolean>(isFavorite);
   const { onOpen } = useModalStore();
   const user = useSession().data?.user;
   const [isPending, startTransition] = React.useTransition();
@@ -34,21 +35,11 @@ const HeartButton: React.FC<HeartButtonProps> = ({
     if (!user) {
       return onOpen("login", {});
     }
-    setHasFavorited(prev => !prev);
 
     startTransition(async () => {
       try {
-        const { hasFavorited, error, success } = await toggleFavoriteAction(
-          listingId
-        );
-        toast({
-          title: success ? "Success" : "Error",
-          description: success
-            ? hasFavorited
-              ? "Listing added to favorites"
-              : "Listing removed from favorites"
-            : error,
-        });
+        addOptimisticLikes(prev => !prev);
+        await toggleFavoriteAction(listingId);
       } catch (error) {
         toast({
           title: "Error",
@@ -62,7 +53,7 @@ const HeartButton: React.FC<HeartButtonProps> = ({
     return (
       <button onClick={toggleFavorite} className="hover:scale-95">
         <div className="flex items-center gap-1">
-          {hasFavorited || isFavorite ? (
+          {optimisticLikes ? (
             <AiFillHeart size={24} className="fill-rose-500" />
           ) : (
             <AiOutlineHeart size={28} className="text-white" />
@@ -81,7 +72,7 @@ const HeartButton: React.FC<HeartButtonProps> = ({
       )}
     >
       <div className="flex items-center gap-1">
-        {hasFavorited || isFavorite ? (
+        {optimisticLikes ? (
           <AiFillHeart size={24} className="fill-rose-500" />
         ) : (
           <AiOutlineHeart size={28} className="fill-black" />

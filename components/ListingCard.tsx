@@ -29,15 +29,18 @@ interface ListingCardProps {
     endDate: Date;
     reservationId: string;
   };
+  isFavorite?: boolean;
 }
 
-const ListingCard: React.FC<ListingCardProps> = ({ data, reservation }) => {
+const ListingCard: React.FC<ListingCardProps> = ({
+  data,
+  reservation,
+  isFavorite,
+}) => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
-  const session = useSession();
-  const user = session.data?.user;
-  const router = useRouter();
+  const user = useSession().data?.user;
   const { getByValue } = useCountries();
   const { toast } = useToast();
   const [isPending, startTransition] = React.useTransition();
@@ -97,8 +100,8 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, reservation }) => {
           <div className="absolute top-3 right-3 z-20">
             <HeartButton
               listingId={data.id}
-              isFavorite={user?.favoriteIds?.includes(data.id) || false}
               slider
+              isFavorite={isFavorite as boolean}
             />
           </div>
         </Carousel>

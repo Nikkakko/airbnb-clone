@@ -4,7 +4,7 @@ import ListingCard from "@/components/ListingCard";
 import ListingCardSkeleton from "@/components/skeletons/ListingCardSkeleton";
 import { Shell } from "@/components/ui/Shell";
 
-import { getAllListing } from "@/lib/getData";
+import { getAllListing, getUserFavoriteListings } from "@/lib/getData";
 import * as React from "react";
 
 interface HomeProps {
@@ -14,6 +14,7 @@ interface HomeProps {
 
 export default async function Home({ params, searchParams }: HomeProps) {
   const listings = await getAllListing();
+  const favoriteIds = await getUserFavoriteListings();
 
   const categoryParam =
     typeof searchParams.category === "string"
@@ -40,14 +41,17 @@ export default async function Home({ params, searchParams }: HomeProps) {
       ) : (
         <Shell variant="container" as="section">
           <div className="pt-24 grid  grid-cols-1  sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5  gap-8">
-            {filteredListings?.map(listing => (
-              <React.Suspense
-                key={listing.id}
-                fallback={<ListingCardSkeleton />}
-              >
-                <ListingCard data={listing} />
-              </React.Suspense>
-            ))}
+            {filteredListings?.map(listing => {
+              const isFavorite = favoriteIds?.some(fav => fav === listing.id);
+              return (
+                <React.Suspense
+                  key={listing.id}
+                  fallback={<ListingCardSkeleton />}
+                >
+                  <ListingCard data={listing} isFavorite={isFavorite} />
+                </React.Suspense>
+              );
+            })}
           </div>
         </Shell>
       )}

@@ -110,7 +110,7 @@ const ListingDetail: React.FC<ListingDetailProps> = async ({
         title={listing.title}
         listingId={listing.id}
         locationValue={listing.locationValue}
-        isFavorite={!!isFavorite || false}
+        isFavorite={isFavorite?.some(fav => fav === listing.id)}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4  rounded-xl overflow-hidden">
         <div className="col-span-1">
