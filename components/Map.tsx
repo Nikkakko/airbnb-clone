@@ -37,15 +37,15 @@ const Map: React.FC<MapProps> = ({ location, ...props }) => {
   const center = getCoordinates(
     (location as string) || (locationValue as string)
   );
-  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(true);
 
   React.useEffect(() => {
     if (center) {
-      setIsLoaded(true);
+      setIsLoaded(false);
     }
   }, [center]);
 
-  if (!isLoaded) {
+  if (isLoaded) {
     return (
       <div className="flex items-center justify-center h-[35vh]">
         <LoaderIcon className="animate-spin" />
