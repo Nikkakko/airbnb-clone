@@ -4,14 +4,22 @@ import LoginButton from "@/components/LoginButton";
 import ListingCardSkeleton from "@/components/skeletons/ListingCardSkeleton";
 import { Shell } from "@/components/ui/Shell";
 import { currentUser } from "@/lib/auth";
-import { getFavorites } from "@/lib/getData";
+import { getFavorites, getUserFavoriteListings } from "@/lib/getData";
 import * as React from "react";
 
 interface FavoritesPageProps {}
 
 const FavoritesPage: React.FC<FavoritesPageProps> = async ({}) => {
-  const favorites = await getFavorites();
-  const user = await currentUser();
+  // const favorites = await getFavorites();
+  // const favoriteIds = await getUserFavoriteListings();
+  // const user = await currentUser();
+
+  //promise all
+  const [favorites, favoriteIds, user] = await Promise.all([
+    getFavorites(),
+    getUserFavoriteListings(),
+    currentUser(),
+  ]);
 
   if (!user) {
     return (
@@ -52,7 +60,10 @@ const FavoritesPage: React.FC<FavoritesPageProps> = async ({}) => {
         <div className="grid grid-cols-1 gap-2 md:gap-3 xl:gap-4 md:grid-cols-2 xl:grid-cols-4">
           {favorites?.map(listing => (
             <React.Suspense fallback={<ListingCardSkeleton />} key={listing.id}>
-              <ListingCard data={listing} />
+              <ListingCard
+                data={listing}
+                isFavorite={favoriteIds?.some(fav => fav === listing.id)}
+              />
             </React.Suspense>
           ))}
         </div>

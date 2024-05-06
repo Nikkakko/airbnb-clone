@@ -13,8 +13,14 @@ interface HomeProps {
 }
 
 export default async function Home({ params, searchParams }: HomeProps) {
-  const listings = await getAllListing();
-  const favoriteIds = await getUserFavoriteListings();
+  // const listings = await getAllListing();
+  // const favoriteIds = await getUserFavoriteListings();
+
+  //promise all
+  const [listings, favoriteIds] = await Promise.all([
+    getAllListing(),
+    getUserFavoriteListings(),
+  ]);
 
   const categoryParam =
     typeof searchParams.category === "string"
